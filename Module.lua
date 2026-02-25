@@ -30,6 +30,7 @@ local function Tween(params)
 		math.max(objectSize.X, objectSize.Z) / 2 + 0.5
 	)
 
+	-- Build comprehensive ignore list
 	local ignoreList = {object}
 	if isModel then
 		for _, desc in pairs(object:GetDescendants()) do
@@ -78,9 +79,11 @@ local function Tween(params)
 		return false
 	end
 
+
 	local function segmentBlocked(from, to)
 		local dir = to - from
 		if dir.Magnitude < 0.01 then return false end
+
 
 		if singleRayBlocked(from, to) then return true end
 
@@ -377,6 +380,7 @@ local function Tween(params)
 				if d[2] ~= 0 and d[3] ~= 0 then
 					if nodeBlk(cur.x, cur.y + d[2], cur.z) or nodeBlk(cur.x, cur.y, cur.z + d[3]) then dominated = true end
 				end
+
 				if d[1] ~= 0 and d[2] ~= 0 and d[3] ~= 0 then
 					if nodeBlk(cur.x + d[1], cur.y, cur.z)
 						or nodeBlk(cur.x, cur.y + d[2], cur.z)
@@ -421,6 +425,7 @@ local function Tween(params)
 
 		return nil
 	end
+
 
 	local function tryWallHug()
 		local stepSize = math.max(objectSize.X, objectSize.Z) * 0.8 + 0.5
@@ -504,7 +509,7 @@ local function Tween(params)
 							end
 						end
 					end
-
+					
 					if not foundDir then
 						for yOff = -2, 2 do
 							if yOff ~= 0 then
@@ -806,12 +811,12 @@ local function Tween(params)
 		return nil
 	end
 
+
 	local waypoints
 
 	if not segmentBlocked(startPos, destination) then
 		waypoints = {startPos, destination}
 	else
-
 		waypoints = tryPathfinding()
 
 		if not waypoints then
@@ -867,6 +872,7 @@ local function Tween(params)
 			return {Cancel = function() end, Points = {startPos}}
 		end
 	end
+
 
 	local repaired = {waypoints[1]}
 	for i = 2, #waypoints do
@@ -926,9 +932,11 @@ local function Tween(params)
 	repaired[#repaired] = destination
 	waypoints = repaired
 
+
 	waypoints = simplifyPath(waypoints)
 	waypoints[1] = startPos
 	waypoints[#waypoints] = destination
+
 
 	if #waypoints >= 3 then
 		waypoints = safeSmooth(waypoints, 10)
@@ -981,6 +989,7 @@ local function Tween(params)
 			markers[i] = m
 		end
 	end
+
 
 	local totalDist = 0
 	local segLens = {}
